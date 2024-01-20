@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, provide, reactive, ref, watch } from 'vue'
+import { computed, onMounted, provide, reactive, ref, watch } from 'vue'
 import axios from 'axios'
 
 // import MyHello from './components/MyHello.vue';
@@ -9,7 +9,16 @@ import CardList from './components/CardList.vue'
 import Drawer from './components/Drawer.vue'
 
 const items = ref([])
+const cartItems = ref([])
 const drawerOpen = ref(false)
+const isCreatingOrderFetch = ref(false)
+
+const totalPrice = computed(() => {
+  return cartItems.value.reduce((acc, item) => acc + item.price, 0)
+})
+
+const vatPrice = computed(() => Math.round((totalPrice.value * 5) / 100))
+
 const filters = reactive({
   sortBy: 'title',
   searchQuery: ''
@@ -23,11 +32,52 @@ const openDrawer = () => {
   drawerOpen.value = true
 }
 
+const addCartItems = (item) => {
+  cartItems.value.push(item)
+  item.isAdded = true
+}
+
+const removeCartItems = (removedItem) => {
+  cartItems.value = cartItems.value.filter((item) => item.id !== removedItem.id)
+
+  const foundItem = items.value.find((item) => item.id === removedItem.id)
+  if (foundItem) {
+    foundItem.isAdded = false
+  }
+}
+
+const onClickAddPlus = (item) => {
+  if (!item.isAdded) {
+    addCartItems(item)
+  } else {
+    removeCartItems(item)
+  }
+}
+
 const onChangeSelect = (e) => {
   filters.sortBy = e.target.value
 }
 const onChangeSearchInput = (e) => {
   filters.searchQuery = e.target.value
+}
+
+const createOrder = async () => {
+  try {
+    isCreatingOrderFetch.value = true
+    const { data } = await axios.post(`${BASE_URL}/orders`, {
+      items: cartItems.value,
+      totalPrice: totalPrice.value
+    })
+
+    cartItems.value = []
+    drawerOpen.value = false
+
+    return data
+  } catch (error) {
+    console.error(error)
+  } finally {
+    isCreatingOrderFetch.value = false
+  }
 }
 
 const fetchItems = async () => {
@@ -95,8 +145,17 @@ const addToFavorites = async (item) => {
 }
 
 onMounted(async () => {
+  if (localStorage.getItem('cart')) {
+    cartItems.value = JSON.parse(localStorage.getItem('cart'))
+  }
+
   await fetchItems()
   await fetchFavorites()
+
+  items.value = items.value.map((item) => ({
+    ...item,
+    isAdded: cartItems.value.find((cartItem) => cartItem.id === item.id)
+  }))
 })
 
 watch(filters, async () => {
@@ -104,23 +163,27 @@ watch(filters, async () => {
   await fetchFavorites()
 })
 
-provide('drawerActions', {closeDrawer, openDrawer})
+watch(
+  cartItems,
+  () => {
+    localStorage.setItem('cart', JSON.stringify(cartItems.value))
+  },
+  { deep: true }
+)
 
-// watch(() => filters.sortBy, async () => {
-// watch(filters, async () => {
-//   try {
-//     const { data } = await axios.get(`${BASE_URL}/items?sortBy=${filters.sortBy}`)
-//     items.value = data
-//   } catch (error) {
-//     console.error(error)
-//   }
-// })
+provide('cart', { closeDrawer, openDrawer, cartItems, removeCartItems })
 </script>
 
 <template>
-  <Drawer v-if="drawerOpen" />
+  <Drawer
+    v-if="drawerOpen"
+    :total-price="totalPrice"
+    :vat-price="vatPrice"
+    @create-order="createOrder"
+    :is-creating-order-fetch="isCreatingOrderFetch"
+  />
   <div class="bg-white w-4/5 m-auto rounded-xl shadow-xl mt-14">
-    <Header @open-drawer="openDrawer"/>
+    <Header :total-price="totalPrice" @open-drawer="openDrawer" />
 
     <div class="p-10">
       <div class="flex justify-between items-center">
@@ -145,7 +208,11 @@ provide('drawerActions', {closeDrawer, openDrawer})
       </div>
 
       <div class="mt-10">
-        <CardList :items="items" @add-to-favorites="addToFavorites" />
+        <CardList
+          :items="items"
+          @add-to-favorites="addToFavorites"
+          @add-cart-items="onClickAddPlus"
+        />
       </div>
     </div>
   </div>

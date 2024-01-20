@@ -1,20 +1,11 @@
 <script setup>
-// import { inject } from 'vue';
-
-// import MyHello from './components/MyHello.vue';
 import Card from './Card.vue'
 
 defineProps({
   items: Array
 });
 
-const onClickAdd = (prop) => {
-  console.log("Add", prop);
-  // emit('addToFavorites', )
-};
-
-const emit = defineEmits(['addToFavorites']);
-// const addToFavorites = inject('addToFavorites')
+const emit = defineEmits(['addToFavorites', 'addCartItems']);
 </script>
 
 <template>
@@ -28,7 +19,7 @@ const emit = defineEmits(['addToFavorites']);
       :price="item.price"
       :is-added="item.isAdded"
       :is-favorite="item.isFavorite"
-      :onClickAdd="onClickAdd"
+      :onClickAdd="() => emit('addCartItems', item)"
       :onClickFavorite="() => emit('addToFavorites', item)"
     />
   </div>
