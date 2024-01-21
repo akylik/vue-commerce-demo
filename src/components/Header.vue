@@ -12,7 +12,7 @@ defineProps({
         <img src="/logo.png" alt="Logo" class="w-10" />
         <div>
           <h2 class="text-xl font-bold uppercase">Vue Sneakers</h2>
-          <p class="text-slate-400">Магазин лучших кросовок</p>
+          <p class="text-slate-400">The best sneakers store</p>
         </div>
       </div>
     </router-link>
@@ -28,13 +28,15 @@ defineProps({
       <router-link to="/favorites">
         <li class="flex items-center cursor-pointer gap-2 text-gray-500 hover:text-black">
           <img src="/heart.svg" alt="Heart" />
-          <span>Закладки</span>
+          <span>Bookmarks</span>
         </li>
       </router-link>
-      <li class="flex items-center cursor-pointer gap-2 text-gray-500 hover:text-black">
-        <img src="/profile.svg" alt="Profile" />
-        <span>Профиль</span>
-      </li>
+      <router-link to="/profile">
+        <li class="flex items-center cursor-pointer gap-2 text-gray-500 hover:text-black">
+          <img src="/profile.svg" alt="Profile" />
+          <span>Profile</span>
+        </li>
+      </router-link>
     </ul>
   </header>
 </template>

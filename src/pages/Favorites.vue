@@ -1,10 +1,12 @@
 <script setup>
 import axios from 'axios'
 import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router';
 
 import { BASE_URL } from '../../config'
 import CardList from '../components/CardList.vue'
 
+const router = useRouter();
 const favorites = ref([])
 
 const fetchFavorites = async () => {
@@ -16,12 +18,17 @@ const fetchFavorites = async () => {
   }
 }
 
+
 onMounted(async () => {
+  if (!localStorage.getItem('token')) {
+    router.push('/login');
+  }
+
   await fetchFavorites()
 })
 </script>
 
 <template>
-  <h2 class="text-3xl font-bold mb-8">Мои закладки</h2>
+  <h2 class="text-3xl font-bold mb-8">My bookmarks</h2>
   <CardList :items="favorites" :is-hide-favorites="true" />
 </template>

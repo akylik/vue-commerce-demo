@@ -43,39 +43,39 @@ const buttonDisabled = computed(() => {
 
 <template>
   <div class="fixed top-0 left-0 h-full w-full bg-black z-10 opacity-70"></div>
-  <div class="bg-white w-96 h-full fixed right-0 top-0 z-20 p-8">
+  <div class="bg-white w-96 h-full fixed right-0 top-0 z-20 p-8 overflow-y-auto">
     <DrawerHead />
 
     <div v-if="!cartItems.length || orderId" class="flex h-full items-center">
       <InfoBlock
         v-if="!cartItems.length && !orderId"
         class="my-auto"
-        title="Корзина пустая"
-        description="Добавте заказ"
+        title="Empty cart"
+        description="Add an order"
         image-url="/package-icon.png"
       />
 
       <InfoBlock
         v-if="orderId"
         class="my-auto"
-        title="Заказ оформлен"
-        :description="`Ваш заказ №${orderId} скоро будет передан курьерской доставке`"
+        title="Order placed"
+        :description="`Your order №${orderId}  will soon be handed over to the courier delivery`"
         image-url="/order-success-icon.png"
       />
     </div>
 
-    <div v-else>
+    <div v-else class="">
       <CartItemList />
 
       <div class="flex flex-col gap-4 mt-7">
         <div class="flex gap-2">
-          <span>Итого:</span>
+          <span>Total:</span>
           <div class="flex-1 border-b border-dashed"></div>
           <b>{{ totalPrice }} $</b>
         </div>
 
         <div class="flex gap-2">
-          <span>Налог 5%:</span>
+          <span>Tax 5%:</span>
           <div class="flex-1 border-b border-dashed"></div>
           <b>{{ vatPrice }} $</b>
         </div>
@@ -85,7 +85,7 @@ const buttonDisabled = computed(() => {
           @click="createOrder"
           class="bg-lime-500 w-full rounded-xl py-3 text-white hover:bg-lime-600 transition active:bg-lime-700 disabled:bg-slate-300 cursor-pointer mt-4"
         >
-          {{ isCreatingOrderFetch ? 'Заказ создается...' : 'Оформить заказ' }}
+          {{ isCreatingOrderFetch ? 'Order is being created...' : 'Place order' }}
         </button>
       </div>
     </div>

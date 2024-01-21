@@ -1,1 +1,1 @@
-export const BASE_URL = "https://56a82c5f4aac9f46.mokky.dev";
+export const BASE_URL = import.meta.env.VITE_BASE_URL;

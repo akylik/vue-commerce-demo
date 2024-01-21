@@ -2,10 +2,12 @@
 import axios from 'axios'
 import { inject, onMounted, reactive, ref, watch } from 'vue'
 import debounce from 'lodash.debounce'
-import { BASE_URL } from '../../config'
+import { useRouter } from 'vue-router'
 
+import { BASE_URL } from '../../config'
 import CardList from '../components/CardList.vue'
 
+const router = useRouter()
 const items = ref([])
 
 const filters = reactive({
@@ -97,7 +99,10 @@ const fetchFavorites = async () => {
 }
 
 onMounted(async () => {
-  console.log('import.meta.env.VITE_BASE_URL', import.meta.env.VITE_BASE_URL)
+  if (!localStorage.getItem('token')) {
+    router.push('/login')
+  }
+
   await fetchItems()
   await fetchFavorites()
 
@@ -126,20 +131,20 @@ watch(
 
 <template>
   <div class="flex justify-between items-center">
-    <h2 class="text-3xl font-bold mb-8">Все кросовки</h2>
+    <h2 class="text-3xl font-bold mb-8">All sneakers</h2>
 
     <div class="flex gap-4">
       <select @change="onChangeSelect" class="py-2 px-3 border rounded-md outline-none">
-        <option value="title">По названию</option>
-        <option value="price">По цене (дешевые)</option>
-        <option value="-price">По цене (дорогие)</option>
+        <option value="title">By name</option>
+        <option value="price">By price (cheap)</option>
+        <option value="-price">By price (expensive)</option>
       </select>
 
       <div class="relative">
         <img class="absolute left-4 top-3" alt="Search" src="/search.svg" />
         <input
           class="border rounded-md py-2 pl-11 pr-4 outline-none focus:border-gray-400"
-          placeholder="Поиск..."
+          placeholder="Search..."
           @input="onChangeSearchInput"
         />
       </div>
