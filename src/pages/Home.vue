@@ -97,6 +97,7 @@ const fetchFavorites = async () => {
 }
 
 onMounted(async () => {
+  console.log('import.meta.env.VITE_BASE_URL', import.meta.env.VITE_BASE_URL)
   await fetchItems()
   await fetchFavorites()
 
