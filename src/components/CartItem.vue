@@ -1,5 +1,4 @@
 <script setup>
-
 const emit = defineEmits(['onClickRemove'])
 
 defineProps({
@@ -8,10 +7,8 @@ defineProps({
   title: String,
   price: Number,
   isFavorite: Boolean,
-  isAdded: Boolean,
-  // onClickRemove: Function,
+  isAdded: Boolean
 })
-
 </script>
 
 <template>
@@ -23,8 +20,13 @@ defineProps({
 
       <div class="flex justify-between mt-2">
         <b class="flex-1">{{ price }}</b>
-        <img @click="emit('onClickRemove')" class="opacity-50 hover:opacity-100 transition cursor-pointer" src="/close.svg" alt="Close" />
+        <img
+          @click="() => emit('onClickRemove')"
+          class="opacity-50 hover:opacity-100 transition cursor-pointer"
+          src="/close.svg"
+          alt="Close"
+        />
       </div>
     </div>
-  </div>  
+  </div>
 </template>

@@ -1,8 +1,8 @@
 <script setup>
-import { inject } from 'vue';
-import CartItem from './CartItem.vue';
+import { inject } from 'vue'
+import CartItem from './CartItem.vue'
 
-const {cartItems, removeCartItems} = inject('cart')
+const { cartItems, removeCartItems } = inject('cart')
 </script>
 
 <template>
@@ -17,6 +17,6 @@ const {cartItems, removeCartItems} = inject('cart')
       :is-added="item.isAdded"
       :is-favorite="item.isFavorite"
       @on-click-remove="() => removeCartItems(item)"
-      />
-    </div>
+    />
+  </div>
 </template>
